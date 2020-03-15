@@ -42,7 +42,7 @@ int IsSorted(int tab[], int taille)
     for (int i=0; i<taille-1; i++)
         if(tab[i]>tab[i+1])
         {
-            printf("tab[i]=%d ; tab[i+1]=%d",tab[i],tab[i+1]);
+            printf("ERREUR tableau non trié.tab[%d]=%d ; tab[%d+1]=%d\n",i, tab[i], i,tab[i+1]);
             return 0;
         }
     return 1;
@@ -265,13 +265,10 @@ float ShellSort(int tab[] ,int taille)
     return (float)(t2-t1)/CLOCKS_PER_SEC;
 }
 
-
-float RecursiviteQuickSort(int debut, int fin, int t[])
+// methode trouvé sur internet
+void RecursiviteQuickSort(int debut, int fin, int t[])
 {
     int p ,i ,tmp, j;
-    clock_t t1,t2;
-
-    t1 = clock() ;
 
     j=debut;
     p=t[fin];
@@ -297,20 +294,147 @@ float RecursiviteQuickSort(int debut, int fin, int t[])
     t[i]=p;
     t[fin]=tmp;
 
-    if(i-debut-1 >= 1)
+    if((i-1)-debut >= 1)
         RecursiviteQuickSort(debut, i-1, t);
 
     if(fin-(i+1) >= 1)
         RecursiviteQuickSort(i+1, fin, t);
-
-    t2 = clock();
-    return (float)(t2-t1)/CLOCKS_PER_SEC;
 }
 
 float Quick_sort(int tab[] ,int taille)
 {
-    return RecursiviteQuickSort(0, taille-1,tab);
+    clock_t t1,t2;
+
+    t1 = clock() ;
+    RecursiviteQuickSort(0, taille-1,tab);
+    t2 = clock();
+
+    return (float)(t2-t1)/CLOCKS_PER_SEC;
+}
+
+// methode du prof en choisissant comme pivot la derniere case du tableau.
+void RecursiviteQuickSort2(int g, int d, int t[])
+{
+    int tmp, k1, k2, p;
+
+    k1=g;
+    p=t[d];
+    //car le pivot est le dernier élément du tableau.
+    k2=d-1;
+
+    while(k1<=k2)
+    {
+        while(k1<=k2 && t[k1]<=p)
+            k1++;
+        while(k2>=k1 && t[k2]>p)
+            k2--;
+        if(k1<k2)
+        {
+            tmp=t[k1];
+            t[k1]=t[k2];
+            t[k2]=tmp;
+        }
+    }
+    //une fois la partition finit on place le pivot à sa place dans le tableau.
+    if(k1<d)
+    {
+        tmp=t[d];
+        t[d]=t[k1];
+        t[k1]=tmp;
+    }
+
+    if((k1-1)-g>=1)
+        RecursiviteQuickSort2(g, k1-1, t);
+    if(d-(k1+1)>=1)
+        RecursiviteQuickSort2(k1+1, d, t);
+}
+
+float Quick_sort2(int tab[] ,int taille)
+{
+    clock_t t1,t2;
+
+    t1 = clock() ;
+    RecursiviteQuickSort2(0, taille-1,tab);
+    t2 = clock();
+
+    return (float)(t2-t1)/CLOCKS_PER_SEC;
 }
 
 
+// methode du prof en choisissant un pivot (t[g] + t[d]) / 2.
+void RecursiviteQuickSort3(int g, int d, int t[])
+{
+    int tmp, k1, k2, p;
+
+    k1=g;
+    p=(t[g] + t[d]) / 2;
+    k2=d;
+
+    while(k1<k2)
+    {
+        while(k1<d && t[k1]<=p)
+            k1++;
+        while(k2>g && t[k2]>p)
+            k2--;
+        if(k1<k2 )
+        {
+            tmp=t[k1];
+            t[k1]=t[k2];
+            t[k2]=tmp;
+        }
+    }
+    if((k1-1)-g>=1)
+        RecursiviteQuickSort3(g, k1-1, t);
+    if(d-k1>=1)
+        RecursiviteQuickSort3(k1, d, t);
+
+}
+
+float Quick_sort3(int tab[] ,int taille)
+{
+    clock_t t1,t2;
+
+    t1 = clock() ;
+    RecursiviteQuickSort3(0, taille-1,tab);
+    t2 = clock();
+
+    return (float)(t2-t1)/CLOCKS_PER_SEC;
+}
+
+
+
+void Recursivite_Quick_rem(int t[], int g, int d)
+{
+    int p = (t[g] + t[d]) / 2;
+    int k1 = g, k2 = d, temp;
+
+    while (k1 < k2) //tant que les indices ne se sont pas croisés
+    {
+        if (t[k1] > p && t[k2] <= p) // on echange t[k1] et t[k2] pour les mettre a leur place s'ils sont du mauvais coté de p
+        {
+            temp = t[k1];
+            t[k1] = t[k2];
+            t[k2] = temp;
+        }
+        while (k1 < d && t[k1] <= p) //on fait avancer k1 jusqta ce que t[k1] soit une valeur mal placéé
+            k1++;
+        while (k2 > g && t[k2] > p) // pareil pour k2
+            k2--;
+    }
+    if (d - g < 2) // si le tableau est de taille 2 ou moins alors il a été trié
+        return;
+    Recursivite_Quick_rem(t, g, k1 - 1);
+    Recursivite_Quick_rem(t, k2 + 1, d);
+}
+
+float Tri_Quick_rem(int t[], int lg)
+{
+    clock_t t1,t2;
+
+    t1 = clock() ;
+    Recursivite_Quick_rem(t, 0, lg - 1);
+    t2 = clock();
+
+    return (float)(t2-t1)/CLOCKS_PER_SEC;
+}
 

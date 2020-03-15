@@ -17,5 +17,10 @@ float ShakeSort(int tab[] ,int taille);
 float HeapSort(int tab[] ,int taille);
 float ShellSort(int tab[] ,int taille);
 float Quick_sort(int tab[] ,int taille);
+float Quick_sort2(int tab[] ,int taille);
+float Quick_sort3(int tab[] ,int taille);
+
+
+float Tri_Quick_rem(int t[], int lg);
 
 #endif
